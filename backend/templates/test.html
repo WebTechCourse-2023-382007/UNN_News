@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+  {% for article in articles %}
+<div>
+	<h2>{{ article.title }}</h2>
+	<small>	Created: {{ article.created_at }} <br/>
+		Updated: {{article.updated_at}}
+	</small> <br/>
+	Description: {{article.description}}
+	<br/>
+	Content: {{ article.content }}
+	<br/>
+	<img src="{{url_for('static', filename=article.thumbnail)}}"/>
+
+	<br/><br/>
+</div>
+<br/>
+	{% endfor %}
+
+</body>
+</html>
