@@ -1,6 +1,14 @@
 from app import db
 
 
+def all_articles(id=0):
+    if id == 0:
+        return Article.query.order_by(Article.updated_at)
+    elif id > 0:
+        return Article.query.order_by(Article.updated_at).filter(Article.id == id)
+    raise AttributeError("id must be > 0")
+
+
 class User(db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
