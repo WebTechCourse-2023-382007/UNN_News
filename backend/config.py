@@ -9,7 +9,11 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = "postgresql://" + os.getenv('DB_USERNAME')
+    SQLALCHEMY_DATABASE_URI += ":" + os.getenv('DB_PASSWORD')
+    SQLALCHEMY_DATABASE_URI += "@" + os.getenv('DB_HOST')
+    SQLALCHEMY_DATABASE_URI += ":" + os.getenv('DB_PORT')
+    SQLALCHEMY_DATABASE_URI += "/" + os.getenv('DB_NAME')
 
 
 class ProductionConfig(Config):
