@@ -1,12 +1,16 @@
 from app import db
 
 
-def all_articles(id=0):
-    if id == 0:
+def all_articles(count=0):
+    if count == 0:
         return Article.query.order_by(Article.updated_at)
-    elif id > 0:
-        return Article.query.order_by(Article.updated_at).filter(Article.id == id)
-    raise AttributeError("id must be > 0")
+    elif count > 0:
+        return Article.query.order_by(Article.updated_at).limit(count)
+    raise AttributeError("count must be >= 0")
+
+
+def one_article(id):
+    return Article.query.order_by(Article.updated_at).filter(Article.id == id)
 
 
 class User(db.Model):
