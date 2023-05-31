@@ -1,4 +1,9 @@
-from app import db
+from typing import Union
+import flask_sqlalchemy.query
+from app import app
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy(app)
 
 
 def all_articles(count=0):
@@ -11,6 +16,28 @@ def all_articles(count=0):
 
 def one_article(id):
     return Article.query.order_by(Article.updated_at).filter(Article.id == id)
+
+
+def all_users():
+    return User.query.order_by(User.username)
+
+
+def get_user(id):
+    user = User.query.filter(User.id == id).one_or_none()
+    return user
+
+
+def add_user(username, password):
+    user = User(username, password)
+    db.session.add(user)
+    db.session.commit()
+
+
+def edit_user(id, username, password):
+    user = get_user(id)
+    user.username = username
+    user.password = password
+    db.session.commit()
 
 
 class User(db.Model):
@@ -27,6 +54,13 @@ class User(db.Model):
         return f"<Name {self.username}>"
 
 
+articles_categories = db.Table("articles_categories",
+                               db.Column("id", db.Integer, primary_key=True),
+                               db.Column("article_id", db.Integer, db.ForeignKey("articles.id")),
+                               db.Column("category_id", db.Integer, db.ForeignKey("categories.id"))
+                               )
+
+
 class Article(db.Model):
     __tablename__ = "articles"
 
@@ -35,8 +69,9 @@ class Article(db.Model):
     description = db.Column(db.Text)
     content = db.Column(db.Text)
     thumbnail = db.Column(db.String(255))
-    created_at = db.Column(db.Time)
-    updated_at = db.Column(db.Time)
+    created_at = db.Column(db.DateTime)
+    updated_at = db.Column(db.DateTime)
+    categories = db.relationship("Category", secondary=articles_categories, backref="articles")
 
     def __init__(self, title, description, content, thumbnail, created_at, updated_at):
         self.title = title
@@ -48,6 +83,10 @@ class Article(db.Model):
 
     def __repr__(self):
         return f"<id {self.id}>"
+
+    @staticmethod
+    def all():
+        return Article.query.order_by(Article.updated_at)
 
 
 class Category(db.Model):
@@ -61,3 +100,32 @@ class Category(db.Model):
 
     def __repr__(self):
         return f"<id {self.id}>"
+
+    @staticmethod
+    def all() -> flask_sqlalchemy.query.Query:
+        return Category.query.order_by(Category.name)
+
+    @staticmethod
+    def get(cat_id: int) -> Union["Category", None]:
+        category = Category.query.filter(Category.id == cat_id)
+        if category.count() == 0:
+            return None
+        return category[0]
+
+    @staticmethod
+    def add(name) -> int:
+        cat = Category(name)
+        db.session.add(cat)
+        db.session.commit()
+        return cat.id
+
+    def edit(self, new_name: str) -> "Category":
+        self.name = new_name
+        db.session.commit()
+        return self
+
+    def delete(self) -> str:
+        name = self.name
+        db.session.delete(self)
+        db.session.commit()
+        return name
