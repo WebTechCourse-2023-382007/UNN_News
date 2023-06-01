@@ -9,11 +9,10 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-really-needs-to-be-changed'
-    SQLALCHEMY_DATABASE_URI = "postgresql://" + os.getenv('DB_USERNAME')
-    SQLALCHEMY_DATABASE_URI += ":" + os.getenv('DB_PASSWORD')
-    SQLALCHEMY_DATABASE_URI += "@" + os.getenv('DB_HOST')
-    SQLALCHEMY_DATABASE_URI += ":" + os.getenv('DB_PORT')
-    SQLALCHEMY_DATABASE_URI += "/" + os.getenv('DB_NAME')
+    SQLALCHEMY_DATABASE_URI = f"postgresql://" \
+                              f"{os.environ['POSTGRES_USER']}:" \
+                              f"{os.environ['POSTGRES_PASSWORD']}@db/" \
+                              f"{os.environ['POSTGRES_DB']}"
 
 
 class ProductionConfig(Config):
