@@ -1,21 +1,19 @@
-import Link from 'next/link';
+import '../../styles/globals.css';
 import Feed from '../../components/feed.jsx';
 import Header from '../../components/header.jsx';
 import Footer from '../../components/footer.jsx';
-import '../../styles/globals.css';
-import { useState } from 'react';
 
 const posts = [
     {
         id: 1,
         title: 'Студент переиграл в видео игры и не сдал сессию',
-        imgSrc: 'images/DeathStranding.jpg',
-        href: `posts/DeathStranding`,
+        imgSrc: '../images/DeathStranding.jpg',
+        href: `/posts/DeathStranding`,
         description:
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'Game' },
+        section: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -34,7 +32,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'Game' },
+        section: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -46,13 +44,13 @@ const posts = [
     {
         id: 3,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../../DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        section: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -63,13 +61,13 @@ const posts = [
         },
         id: 4,
         title: 'Студент переиграл в видео игры и не сдал сессию',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        section: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -82,13 +80,13 @@ const posts = [
     {
         id: 5,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        section: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -101,13 +99,13 @@ const posts = [
     {
         id: 6,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Algebra' },
+        section: { title: 'Алгебра', id: 6, href: 'algebra' },
 
         author: {
             name: 'Michael Foster',
@@ -125,50 +123,75 @@ const sections = [
         id: 1,
         title: "Игры",
         description: "Будь в курсе киберспорта",
-        refSection: "/category/game",
+        name: "game",
     },
     {
         id: 2,
         title: "Сессия Депрессия",
         description: "Будь в курсе киберспорта",
-        refSection: "/category/Session",
+        name: "session",
     },
     {
         id: 3,
         title: "Андрей Лох",
         description: "Будь в курсе киберспорта",
-        refSection: "/AndreyLox",
+        name: "andreyLox",
     },
     {
         id: 4,
         title: "Саша крутой",
         description: "Будь в курсе киберспорта",
-        refSection: "/SashaCool",
+        name: "sashaCool",
     },
     {
         id: 5,
         title: "Живая лента",
         description: "Узнай главные новости университета",
-        refSection: "/Algebra",
+        name: "main",
     },
     {
         id: 6,
         title: "Алгебра",
         description: "Все о математике и геометрии. А так же немного запретного...",
-        refSection: "/Algebra",
+        name: "algebra",
     },
 
 ];
 
+function getSectionFromRef(name) {
+    return sections.find((section) => {
+        return section.name === name;
+    })
+}
 
+export const getStaticPaths = async () => {
 
-export default function Post({ children }) {
+    const paths = sections.map(section => ({
+        params: { id: section.name },
+    }));
 
-    const [section, setSection] = useState(sections[4]);
-    const [postList, setPosts] = useState(posts);
+    return {
+        paths,
+        fallback: true,
+    }
+}
+
+export const getStaticProps = async (context) => {
+    const id = context.params.id;
+    const section = getSectionFromRef(id);
+    return {
+        props: {
+            id,
+            section,
+        }
+    }
+}
+
+export default function Category(props) {
 
     function GetPosts(section) {
         const postList = [];
+
         if (section.id === 5)
             return posts;
 
@@ -179,23 +202,11 @@ export default function Post({ children }) {
         return postList;
     }
 
-    function getSection(id) {
-        return sections.find((section) => {
-            return section.id == id;
-        });
-    }
-
-    function chancheSection(e) {
-        const nowSection = getSection(e.target.id);
-        setSection(nowSection);
-        setPosts(GetPosts(nowSection));
-    }
-
     return (
         <div>
-            <Header sections={sections} onClickSection={chancheSection}></Header>
+            <Header sections={sections} ></Header>
             <main className='mx-auto max-w-7xl px-6 lg:px-8'>
-                <h1> <strong>Abboba</strong></h1>
+                <Feed section={props.section} postsData={GetPosts(props.section)} ></Feed>
             </main>
             <Footer></Footer>
         </div>
