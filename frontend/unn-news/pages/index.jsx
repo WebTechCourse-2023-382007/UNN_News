@@ -12,13 +12,13 @@ const posts = [
     {
         id: 1,
         title: 'Студент переиграл в видео игры и не сдал сессию',
-        imgSrc: 'images/DeathStranding.jpg',
-        href: `posts/DeathStranding`,
+        imgSrc: '../images/DeathStranding.jpg',
+        href: `/posts/DeathStranding`,
         description:
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'Game' },
+        category: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -37,7 +37,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'Game' },
+        category: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -49,13 +49,13 @@ const posts = [
     {
         id: 3,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../../DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -66,13 +66,13 @@ const posts = [
         },
         id: 4,
         title: 'Студент переиграл в видео игры и не сдал сессию',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -85,13 +85,13 @@ const posts = [
     {
         id: 5,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -104,13 +104,13 @@ const posts = [
     {
         id: 6,
         title: 'Boost your conversion rate',
-        imgSrc: 'images/DeathStranding.jpg',
+        imgSrc: '../images/DeathStranding.jpg',
         href: '#',
         description:
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'Algebra' },
+        category: { title: 'Алгебра', id: 6, href: 'algebra' },
 
         author: {
             name: 'Michael Foster',
@@ -123,42 +123,42 @@ const posts = [
     // More posts...
 ];
 
-const sections = [
+const categories = [
     {
         id: 1,
         title: "Игры",
         description: "Будь в курсе киберспорта",
-        refSection: "/category/game",
+        name: "game",
     },
     {
         id: 2,
         title: "Сессия Депрессия",
         description: "Будь в курсе киберспорта",
-        refSection: "/category/session",
+        name: "session",
     },
     {
         id: 3,
         title: "Андрей Лох",
         description: "Будь в курсе киберспорта",
-        refSection: "category/andreyLox",
+        name: "andreyLox",
     },
     {
         id: 4,
         title: "Саша крутой",
         description: "Будь в курсе киберспорта",
-        refSection: "category/sashaCool",
+        name: "sashaCool",
     },
     {
         id: 5,
         title: "Живая лента",
         description: "Узнай главные новости университета",
-        refSection: "category/main",
+        name: "main",
     },
     {
         id: 6,
         title: "Алгебра",
         description: "Все о математике и геометрии. А так же немного запретного...",
-        refSection: "category/algebra",
+        name: "algebra",
     },
 
 ];
@@ -167,38 +167,38 @@ const sections = [
 
 export default function Home() {
 
-    const [section, setSection] = useState(sections[4]);
+    const [category, setСategory] = useState(categories[4]);
     const [postList, setPosts] = useState(posts);
 
-    function GetPosts(section) {
+    function GetPosts(category) {
         const postList = [];
-        if (section.id === 5)
+        if (category.id === 5)
             return posts;
 
         posts.forEach((post) => {
-            if (post.section.id === section.id) postList.push(post);
+            if (post.category.id === category.id) postList.push(post);
         });
 
         return postList;
     }
 
-    function getSection(id) {
-        return sections.find((section) => {
-            return section.id == id;
+    function getСategory(id) {
+        return categories.find((category) => {
+            return category.id == id;
         });
     }
 
-    function chancheSection(e) {
-        const nowSection = getSection(e.target.id);
-        setSection(nowSection);
-        setPosts(GetPosts(nowSection));
+    function chancheСategory(e) {
+        const nowcategory = getСategory(e.target.id);
+        setСategory(nowcategory);
+        setPosts(GetPosts(nowcategory));
     }
 
     return (
         <div>
-            <Header sections={sections} onClickSection={chancheSection}></Header>
+            <Header categories={categories}></Header>
             <main className='mx-auto max-w-7xl px-6 lg:px-8'>
-                <Feed section={section} postsData={postList} onClickSection={chancheSection}></Feed>
+                <Feed category={category} postsData={postList}></Feed>
             </main>
             <Footer></Footer>
         </div>

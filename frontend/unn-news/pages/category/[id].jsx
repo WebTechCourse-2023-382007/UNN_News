@@ -13,7 +13,7 @@ const posts = [
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'game' },
+        category: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -32,7 +32,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Игры', id: 1, href: 'game' },
+        category: { title: 'Игры', id: 1, href: 'game' },
         author: {
             name: 'Michael Foster',
             role: 'Co-Founder / CTO',
@@ -50,7 +50,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -67,7 +67,7 @@ const posts = [
             'Студент третьего курса играл в Death Stranding и не стал готовиться к экзаменам. Теперь его ждет отчисление.',
         date: 'Май 29, 2023',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -86,7 +86,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'game' },
+        category: { title: 'Алгебра', id: 6, href: 'game' },
 
         author: {
             name: 'Michael Foster',
@@ -105,7 +105,7 @@ const posts = [
             'Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.',
         date: 'Mar 16, 2020',
         datetime: '2020-03-16',
-        section: { title: 'Алгебра', id: 6, href: 'algebra' },
+        category: { title: 'Алгебра', id: 6, href: 'algebra' },
 
         author: {
             name: 'Michael Foster',
@@ -118,7 +118,7 @@ const posts = [
     // More posts...
 ];
 
-const sections = [
+const categories = [
     {
         id: 1,
         title: "Игры",
@@ -158,45 +158,45 @@ const sections = [
 
 ];
 
-function getSectionFromRef(name) {
-    return sections.find((section) => {
-        return section.name === name;
+function getCategoryFromRef(name) {
+    return categories.find((category) => {
+        return category.name === name;
     })
 }
 
 export const getStaticPaths = async () => {
 
-    const paths = sections.map(section => ({
-        params: { id: section.name },
+    const paths = categories.map(category => ({
+        params: { id: category.name },
     }));
 
     return {
         paths,
-        fallback: true,
+        fallback: false,
     }
 }
 
 export const getStaticProps = async (context) => {
     const id = context.params.id;
-    const section = getSectionFromRef(id);
+    const category = getCategoryFromRef(id);
     return {
         props: {
             id,
-            section,
+            category,
         }
     }
 }
 
 export default function Category(props) {
 
-    function GetPosts(section) {
+    function GetPosts(category) {
         const postList = [];
 
-        if (section.id === 5)
+        if (category.id === 5)
             return posts;
 
         posts.forEach((post) => {
-            if (post.section.id === section.id) postList.push(post);
+            if (post.category.id === category.id) postList.push(post);
         });
 
         return postList;
@@ -204,9 +204,9 @@ export default function Category(props) {
 
     return (
         <div>
-            <Header sections={sections} ></Header>
+            <Header categories={categories} ></Header>
             <main className='mx-auto max-w-7xl px-6 lg:px-8'>
-                <Feed section={props.section} postsData={GetPosts(props.section)} ></Feed>
+                <Feed category={props.category} postsData={GetPosts(props.category)} ></Feed>
             </main>
             <Footer></Footer>
         </div>
