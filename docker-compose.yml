@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  db:
+    container_name: postgres
+    image: postgres:11
+    restart: always
+    ports:
+      - "5444:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./backend/static/init/sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    env_file:
+      - .env
+
+  backend:
+    container_name: backend
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+
+  frontend:
+    container_name: frontend
+    build:
+      context: ./frontend/unn-news
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:
