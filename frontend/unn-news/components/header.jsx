@@ -1,15 +1,19 @@
 import Link from 'next/link';
 import { Popover } from '@headlessui/react';
 // import {Bars3Icon} from '@heroicons/react/24/solid'; // иконка navBar
+import { CategoriesCommand } from '../app/categories';
 
-export default function Header({ categories }) {
+
+export default function Header() {
+    const categories = CategoriesCommand.getCategories();
+
     return (
         <Popover>
             <header className={"container mx-auto flex items-center border-b-2 px-6 py-2 h-20"}>
-                <h1 className="font-bold">UNN News</h1>
+                <Link href="/" className="font-bold">UNN News</Link>
 
                 <div className='grow inline-flex flex-wrap justify-center items-center'>
-                    {categories?.map((category) => <Link key={category.id} href={"/category/" + category.name} className='px-4'>{category.title}</Link>)}
+                    {categories?.map((category) => <Link key={category.id} href={"/category/" + category.path} className='px-4 hover:px-6'>{category.title}</Link>)}
                 </div>
 
                 {/*Отображает navBar при маленьком размере экрана
@@ -22,7 +26,7 @@ export default function Header({ categories }) {
             </div> */}
 
                 <div className="hidden sm:block">
-                    <Link href="/register" className="mr-2 font-bold">
+                    <Link href="/login" className="mr-2 font-bold">
                         Sing in
                     </Link>
                 </div>

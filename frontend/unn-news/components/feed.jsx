@@ -8,6 +8,7 @@ export default function Feed({ category, postsData }) {
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{category.title}</h2>
         <p className="mt-2 text-lg leading-8 text-gray-600">{category.description}</p>
       </div>
+
       <div className="mx-auto mt-10 grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 border-t border-gray-200 pt-10 sm:mt-16 sm:pt-16 lg:mx-0 lg:max-w-none lg:grid-cols-3">
         {postsData.length !== 0 ?
           postsData?.map((post) => PostPreview({ post })) :
