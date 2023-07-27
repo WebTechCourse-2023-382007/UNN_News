@@ -1,110 +1,162 @@
 from flask_restx import Api, Resource, reqparse, abort
-import models as ms
+from request_parsers import json_article_parser, category_parser, user_parser, \
+    articles_parser
+from repos import ArticleRepo, CategoryRepo, UserRepo, save_session
+from schemas import ArticleSchema, CategorySchema, UserSchema
 from app import app
-from view import categories_schema, category_schema, article_schema, articles_schema
 
-api = Api(app, prefix="/articles")
-user_namespace = api.namespace("users", description="Users operations")
+api = Api(app)
 articles_namespace = api.namespace("articles", description="Articles operations")
 categories_namespace = api.namespace("categories", description="Categories operations")
+user_namespace = api.namespace("users", description="Users operations")
 
 
-class RequestParsers:
+"""
+ARTICLES
+"""
+
+article_schema = ArticleSchema()
+articles_schema = ArticleSchema(many=True)
+
+
+@articles_namespace.route("")
+class ArticlesController(Resource):
+    @api.doc(parser=articles_parser)
+    def get(self):
+        category = articles_parser.parse_args()["category"]
+        if category:
+            articles = ArticleRepo.all_by_category(category)
+        else:
+            articles = ArticleRepo.all()
+
+        return articles_schema.dump(articles)
+
+    @api.doc(parser=json_article_parser)
+    def post(self):
+        json_view = reqparse.request.get_json()
+        new_article = article_schema.load(json_view)
+        ArticleRepo.add(new_article)
+        return article_schema.dump(new_article)
+
+
+@articles_namespace.route("/<int:article_id>")
+class ArticleController(Resource):
     @staticmethod
-    def user_parser():
-        res = reqparse.RequestParser()
-        res.add_argument('username', type=str, help="user's username")
-        res.add_argument('password', type=str, help="user's password")
-        return res
+    def get_article(article_id):
+        category = ArticleRepo.get_by_id(article_id)
+        if category:
+            return category
+        abort(404, "Статья не найдена")
 
-    @staticmethod
-    def category_parser():
-        res = reqparse.RequestParser()
-        res.add_argument('name', type=str, help='category name')
-        return res
+    def get(self, article_id):
+        article = self.get_article(article_id)
+        return article_schema.dump(article)
+
+    @api.doc(parser=json_article_parser)
+    def put(self, article_id):
+        article = self.get_article(article_id)
+        json_view = reqparse.request.get_json()
+        article_schema.load(json_view, instance=article, partial=True)
+        save_session()
+        return article_schema.dump(article)
+
+    def delete(self, article_id):
+        article = self.get_article(article_id)
+        return ArticleRepo.delete(article)
+
+
+"""
+CATEGORIES
+"""
+
+category_schema = CategorySchema()
+categories_schema = CategorySchema(many=True)
 
 
 @categories_namespace.route("")
 class CategoriesController(Resource):
-    parser = RequestParsers.category_parser()
-
     def get(self):
-        categories = ms.Category.all()
+        categories = CategoryRepo.all()
         return categories_schema.dump(categories)
 
-    @api.doc(parser=parser)
+    @api.doc(parser=category_parser)
     def post(self):
-        name = self.parser.parse_args()["name"]
-        return ms.Category.add(name)
+        json_view = reqparse.request.get_json()
+        cat = category_schema.load(json_view)
+        CategoryRepo.add(cat)
+        return category_schema.dump(cat)
 
 
 @categories_namespace.route("/<int:cat_id>")
 class CategoryController(Resource):
-    parser = RequestParsers.category_parser()
-
     @staticmethod
     def get_category(cat_id):
-        category = ms.Category.get(cat_id)
-        if category is None:
-            abort(404, "Категория не найдена")
-        return category
+        category = CategoryRepo.get_by_id(cat_id)
+        if category:
+            return category
+        abort(404, "Категория не найдена")
 
     def get(self, cat_id):
         category = self.get_category(cat_id)
         return category_schema.dump(category)
 
-    @api.doc(parser=parser)
+    @api.doc(parser=category_parser)
     def put(self, cat_id):
-        name = self.parser.parse_args()['name']
         cat = self.get_category(cat_id)
-        cat.edit(name)
+        json_view = reqparse.request.get_json()
+        category_schema.load(json_view, instance=cat, partial=True)
+        save_session()
         return category_schema.dump(cat)
 
     def delete(self, cat_id):
         cat = self.get_category(cat_id)
-        return cat.delete()
+        return CategoryRepo.delete(cat)
 
 
-@articles_namespace.route("")
-class ArticlesController(Resource):
-    def get(self):
-        articles = ms.Article.all()
-        return articles_schema.dump(articles)
+"""
+USERS
+"""
+
+user_schema = UserSchema(load_only=["username", "password"], dump_only=["id"])
+users_schema = UserSchema(many=True)
 
 
 @user_namespace.route("")
-class AllUsersController(Resource):
-    parser = RequestParsers.user_parser()
-
+class UsersController(Resource):
     def get(self):
-        return ms.all_users().count()
+        return users_schema.dump(UserRepo.all())
 
-    @api.doc(parser=parser)
+    @api.doc(parser=user_parser)
     def post(self):
-        args = self.parser.parse_args()
-        username = args['username']
-        password = args['password']
-        ms.add_user(username, password)
+        json_view = reqparse.request.get_json()
+        user = user_schema.load(json_view)
+        UserRepo.add(user)
+        return user_schema.dump(user)
 
 
 @user_namespace.route("/<int:user_id>")
-class OneUserController(Resource):
-    parser = RequestParsers.user_parser()
+class UserController(Resource):
+    @staticmethod
+    def get_user(user_id):
+        user = UserRepo.get_by_id(user_id)
+        if user:
+            return user
+        abort(404, "Пользователь не найден")
 
     def get(self, user_id):
-        user = ms.get_user(user_id)
-        if user is None:
-            return {}, 404
-        return {"id": user.id,
-                "username": user.username,
-                "password": user.password}
+        user = self.get_user(user_id)
+        return user_schema.dump(user)
 
-    @api.doc(parser=parser)
+    @api.doc(parser=user_parser)
     def put(self, user_id):
-        args = self.parser.parse_args()
-        username = args['username']
-        password = args['password']
-        ms.edit_user(user_id, username, password)
+        user = self.get_user(user_id)
+        user_schema.load(reqparse.request.get_json(), instance=user, partial=True)
+        save_session()
+        return user_schema.dump(user)
+
+    def delete(self, user_id):
+        user = self.get_user(user_id)
+        return UserRepo.delete(user)
 
 
 if __name__ == '__main__':
